@@ -1,0 +1,310 @@
+---
+title: "Homework 2: Programming in Base R"
+author: Mike Maccia
+format: pdf
+editor: visual
+---
+
+## Task 1: Basic Vector Practice
+
+### Question 1
+
+Pre and Post blood pressure measurements in a medical experiment in 2 vectors.
+
+```{r}
+pre <- c (130,128,116,124,133,134,118,126,114,127,141,138,128,140,137,131,120,128,139,135)
+post <- c(114,98,113,99,107,116,113,111,119,117,101,119,130,122,106,106,124,102,117,113)
+```
+
+### Question 2
+
+Assigning subject names to vector elements
+
+```{r}
+subname <- paste("Subject", 1:20, sep = '_')
+names(pre) <- subname
+names(post) <- subname
+
+```
+
+### Question 3
+
+Change in blood pressure from pre- to post-treatments.
+
+```{r}
+diff_op <- (pre - post)
+
+diff_op
+```
+
+### Question 4
+
+Mean decrease in blood pressure across all patients.
+
+```{r}
+mean(diff_op)
+```
+
+### Question 5
+
+Only patients that had a decrease in blood pressure.
+
+```{r}
+which(diff_op > 0)
+```
+
+### Question 6
+
+Subset patients out with a positive decrease.
+
+```{r}
+positivediff_op <- diff_op [diff_op > 0]
+print(positivediff_op)
+```
+
+### Question 7
+
+The average difference in blood pressure in patients where blood pressure decreased.
+
+```{r}
+mean(positivediff_op)
+```
+
+## Task 2: Basic Data Frame Practice
+
+### Question 1
+
+Build data frame using treatment results from Task 1.
+
+```{r}
+patient <- names(pre)
+pre_bp <- pre
+post_bp <- post
+diff_bp <- diff_op
+bp_df <- data.frame(patient,pre_bp,post_bp,diff_bp,row.names = NULL)
+bp_df
+```
+
+### Question 2
+
+Displaying patients with a rise in blood pressure.
+
+```{r}
+negbp_diff <- bp_df [bp_df$diff_bp < 0,,drop=FALSE]
+negbp_diff
+```
+
+### Question 3
+
+Adding a column to indicate patients with a post blood pressure \< 120.
+
+```{r}
+bp_df$post_bp_norm <- bp_df$post_bp < 120
+
+knitr::kable(bp_df)
+```
+
+##Task 3: List Practice
+
+###Question 1
+
+Second data frame to show pre- and post-bp in patients who took placebo.
+
+```{r}
+pre_placebo <- c (138,135,147,117,152,134,114,121,131,130)
+post_placebo <- c(105,136,123,130,134,143,135,139,120,124)
+
+subname2 <- paste("Subject", 1:10, sep = '_')
+names(pre_placebo) <- subname2
+names(post_placebo) <-subname2
+
+diff_placebo <- (pre_placebo - post_placebo)
+
+patient <- subname2
+pre_bp <- pre_placebo
+post_bp <- post_placebo
+diff_bp <- diff_placebo
+bp_df_placebo <- data.frame(patient,pre_bp,post_bp,diff_bp,row.names = NULL)
+
+bp_df_placebo$postbpnormal <- bp_df_placebo$post_bp < 120
+
+bp_df_placebo
+```
+
+### Question 2
+
+Create a list with both treatment and placebo elements.
+
+```{r}
+bp_list <- list(treatment = bp_df,placebo = bp_df_placebo)
+print(bp_list)
+```
+
+### Question 3
+
+Accessing first list element using:
+
+-   Single square brackets
+
+```{r}
+bp_list[1]
+```
+
+-   Double Square Brackets
+
+```{r}
+bp_list[[1]]
+```
+
+-   By Name
+
+```{r}
+bp_list$treatment
+```
+
+### Question 4
+
+Access placebo, pre-bp column in 1 line
+
+```{r}
+bp_list$treatment$pre_bp
+```
+
+## Task 4 Control Flow Practice
+
+### Quesiton 3
+
+Create new column for characterization of bp.
+
+-   Optimal: [\<]{.underline} 120
+
+-   Borderline: 120 \< bp [\<]{.underline} 130
+
+-   High: \> 130
+
+```{r}
+bp_list$treatment$status <-character(20)
+bp_list$placebo$status <-character(10)
+```
+
+### Question 2
+
+Create loop for status in treatment element.
+
+```{r}
+for (i in 1:nrow(bp_list$treatment)){
+if (bp_list$treatment$post_bp[i] <= 120){
+    bp_list$treatment$status[i] <-"optimal"
+}
+  else if (bp_list$treatment$post_bp[i] >120 && bp_list$treatment$post_bp[i]<=130){
+     bp_list$treatment$status[i] <-"borderline"
+
+}
+  else if (bp_list$treatment$post_bp[i] >130){
+     bp_list$treatment$status[i] <-"high"
+
+}
+}
+bp_list$treatment
+```
+
+### Question 3
+
+Repeat above loop for placebo element.
+
+```{r}
+for (i in 1:nrow(bp_list$placebo)){
+if (bp_list$placebo$post_bp[i] <= 120){
+    bp_list$placebo$status[i] <-"optimal"
+}
+  else if (bp_list$placebo$post_bp[i] >120 && bp_list$placebo$post_bp[i]<=130){
+     bp_list$placebo$status[i] <-"borderline"
+
+}
+  else if (bp_list$placebo$post_bp[i] >130){
+     bp_list$placebo$status[i] <-"high"
+
+}
+}
+bp_list$placebo
+```
+
+## Task 5: Function Writing
+
+### Question 1
+
+Writing a Function that can input mean, var, SD, min, max and output the results for pre-, post-, and difference in blood pressure for both groups.
+
+```{r}
+statbp_func <- function(bp_list, stat="mean"){  #function using the bp_list, then we can pick stat. Mean should be defaulted. 
+ 
+  df_choice <- c("treatment","placebo") #2 df to reference from list
+  bp_type <- c('pre_bp', 'post_bp', 'diff_bp') #where to get numbers from
+  
+  values <-c() #need to make 2 vectors for results to go into
+  stat_name <-c()
+  
+  my_fun <- get(stat) #function to apply statistic as desired
+  
+  #need loop to get the right data frame and then the stat of choice
+  
+  for (i in df_choice) {
+      for (j in bp_type){
+        
+        num_column <- as.numeric(as.character(bp_list[[i]][[j]]))
+        
+        value <- my_fun (num_column, na.rm=T) 
+        values <- c(values, value)
+        name <- paste(stat, j, sep="_")
+        stat_name <- c(stat_name, name)
+      }
+  }
+  #use the other vectors and results to return the data for each group
+  names(values) <-stat_name
+  return (values)
+   }
+
+
+```
+
+Applying mean.
+
+```{r}
+statbp_func_print <- statbp_func(bp_list, "mean")
+
+statbp_func_print
+```
+
+Applying variance.
+
+```{r}
+statbp_func_print <- statbp_func(bp_list, "var")
+
+statbp_func_print
+```
+
+Applying standard deviation.
+
+```{r}
+statbp_func_print <- statbp_func(bp_list, "sd")
+
+statbp_func_print
+```
+
+Applying min.
+
+```{r}
+statbp_func_print <- statbp_func(bp_list, "min")
+
+statbp_func_print
+```
+
+Applying max.
+
+```{r}
+statbp_func_print <- statbp_func(bp_list, "max")
+
+statbp_func_print
+```
+
+
