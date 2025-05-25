@@ -1,6 +1,6 @@
 ---
 title: "Homework 2: Programming in Base R"
-author: Mike Maccia
+author: "Mike Maccia"
 format: pdf
 editor: visual
 ---
@@ -236,7 +236,8 @@ bp_list$placebo
 Writing a Function that can input mean, var, SD, min, max and output the results for pre-, post-, and difference in blood pressure for both groups.
 
 ```{r}
-statbp_func <- function(bp_list, stat="mean"){  #function using the bp_list, then we can pick stat. Mean should be defaulted. 
+statbp_func <- function(bp_list, stat="mean"){  #function using the bp_list, 
+  #then we can pick stat. Mean should be defaulted. 
  
   df_choice <- c("treatment","placebo") #2 df to reference from list
   bp_type <- c('pre_bp', 'post_bp', 'diff_bp') #where to get numbers from
@@ -306,5 +307,3 @@ statbp_func_print <- statbp_func(bp_list, "max")
 
 statbp_func_print
 ```
-
-
