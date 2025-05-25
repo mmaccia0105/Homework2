@@ -12,8 +12,10 @@ editor: visual
 Pre and Post blood pressure measurements in a medical experiment in 2 vectors.
 
 ```{r}
-pre <- c (130,128,116,124,133,134,118,126,114,127,141,138,128,140,137,131,120,128,139,135)
-post <- c(114,98,113,99,107,116,113,111,119,117,101,119,130,122,106,106,124,102,117,113)
+pre <- c (130,128,116,124,133,134,118,126,114,127,141,138,128,140,137,131,120,
+          128,139,135)
+post <- c(114,98,113,99,107,116,113,111,119,117,101,119,130,122,106,106,124,
+          102,117,113)
 ```
 
 ### Question 2
@@ -104,9 +106,9 @@ bp_df$post_bp_norm <- bp_df$post_bp < 120
 knitr::kable(bp_df)
 ```
 
-##Task 3: List Practice
+## Task 3: List Practice
 
-###Question 1
+### Question 1
 
 Second data frame to show pre- and post-bp in patients who took placebo.
 
@@ -196,7 +198,8 @@ for (i in 1:nrow(bp_list$treatment)){
 if (bp_list$treatment$post_bp[i] <= 120){
     bp_list$treatment$status[i] <-"optimal"
 }
-  else if (bp_list$treatment$post_bp[i] >120 && bp_list$treatment$post_bp[i]<=130){
+  else if (bp_list$treatment$post_bp[i] >120 
+           && bp_list$treatment$post_bp[i]<=130){
      bp_list$treatment$status[i] <-"borderline"
 
 }
@@ -217,7 +220,8 @@ for (i in 1:nrow(bp_list$placebo)){
 if (bp_list$placebo$post_bp[i] <= 120){
     bp_list$placebo$status[i] <-"optimal"
 }
-  else if (bp_list$placebo$post_bp[i] >120 && bp_list$placebo$post_bp[i]<=130){
+  else if (bp_list$placebo$post_bp[i] >120 
+           && bp_list$placebo$post_bp[i]<=130){
      bp_list$placebo$status[i] <-"borderline"
 
 }
