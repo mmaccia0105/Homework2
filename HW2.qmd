@@ -106,7 +106,7 @@ bp_df$post_bp_norm <- bp_df$post_bp < 120
 knitr::kable(bp_df)
 ```
 
-## Task 3: List Practice
+## Task 3
 
 ### Question 1
 
